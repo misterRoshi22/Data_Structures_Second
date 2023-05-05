@@ -43,12 +43,33 @@ public:
 
     QueueArray<T> &operator=(const QueueArray &other);
 
-    void print() const;
+    void print(char extra = '\n') const;
 
     void postpone();
 
     void normalize();
+
+    int count_empty() const;
+
+    void print_real(char extra = '\n') const {
+        cout << "[";
+        for (int i = 0; i < capacity; ++i) {
+            cout << data[i];
+            if (i != capacity - 1) cout << ",";
+        }
+        cout << "]" << extra;
+
+    }
 };
+
+template<class T>
+int QueueArray<T>::count_empty() const {
+    if (is_empty()) return capacity;
+    if (is_full()) return 0;
+
+    if (first < last) return capacity - (last - first + 1);
+    return (first - last - 1);
+}
 
 template<class T>
 void QueueArray<T>::normalize() {
@@ -201,15 +222,15 @@ void QueueArray<T>::resize(int new_capacity) {
 //}
 
 template<class T>
-void QueueArray<T>::print() const {
+void QueueArray<T>::print(char extra) const {
     cout << "[";
     int j = this->first;
     for (int i = 0; i < size; i++) {
         cout << data[j];
-        if (i != size - 1) cout << ", ";
+        if (i != size - 1) cout << ",";
         j = (j + 1) % capacity;
     }
-    cout << "]";
+    cout << "]" << extra;
 
 }
 

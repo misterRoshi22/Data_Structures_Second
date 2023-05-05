@@ -1,5 +1,6 @@
 #include <iostream>
 
+
 #ifndef DATA_STRUCTURES_PRACTICE_DOUBLELINKEDLIST_H
 #define DATA_STRUCTURES_PRACTICE_DOUBLELINKEDLIST_H
 using namespace std;
@@ -7,6 +8,9 @@ using namespace std;
 
 template<class T>
 class List;
+
+template<class T>
+class OrderedList;
 
 template<class T>
 class Node {
@@ -30,6 +34,8 @@ public:
     }
 
     friend class List<T>;
+
+    friend class OrderedList<T>;
 };
 
 template<class T>
