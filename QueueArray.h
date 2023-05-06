@@ -9,7 +9,7 @@ const int DEFAULT_CAPACITY = 8;
 
 template<class T>
 class QueueArray {
-private:
+public:
     T *data;
     size_t capacity;
     size_t size;
@@ -60,7 +60,44 @@ public:
         cout << "]" << extra;
 
     }
+
+    void append(const QueueArray<T> &other);
+
+    //Puts queue elements into array
+    void get_elements(T arr[], int size) const {
+        if (size < get_size()) {
+            cout << "ARRAY SIZE IS LESS THAN LIST SIZE";
+            return;
+        }
+        int j = 0;
+        for (int i = first; i != last; i = (i + 1) % capacity) {
+            arr[j++] = data[i];
+        }
+        arr[j] = data[last];
+    }
+
 };
+
+template<class T>
+void QueueArray<T>::append(const QueueArray<T> &other) {
+    this->normalize();
+    this->resize(this->size + other.size);
+    for (int i = other.first; i != other.last; i = (i + 1) % other.capacity) {
+        this->enqueue(other.data[i]);
+    }
+    this->enqueue(other.data[other.last]);
+}
+
+////This is for a different implementation of the QueueArray which has constant capacity
+//template<class T>
+//void QueueArray<T>::enqueue_no_duplicate(const T &val) {
+//    if (is_full()) return;
+//    for (int i = first; i != last; i = (i + 1) % capacity) {
+//        if (data[i] == val) return;
+//    }
+//    enqueue(val);
+//
+//}
 
 template<class T>
 int QueueArray<T>::count_empty() const {
@@ -231,7 +268,6 @@ void QueueArray<T>::print(char extra) const {
         j = (j + 1) % capacity;
     }
     cout << "]" << extra;
-
 }
 
 

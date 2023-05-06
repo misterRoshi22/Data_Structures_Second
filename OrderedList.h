@@ -73,6 +73,9 @@ public:
             remove_head();
     }
 
+    Node<T> *get_head() const {
+        return head;
+    }
 
     ~OrderedList() {
         clear();
@@ -83,7 +86,7 @@ public:
     }
 
     void append(const OrderedList<T> &list) {
-        if (*this == list)
+        if (this == &list)
             throw string("CAN'T APPEND LIST TO ITSELF");
         Node<T> *curr = list.head;
         while (curr != nullptr) {
@@ -122,6 +125,52 @@ public:
             curr = curr->next;
         }
         cout << "]\n";
+    }
+
+    void merge_list(const OrderedList<T> &list) {
+        OrderedList<T> new_list;
+        Node<T> *this_ptr, *other_ptr;
+
+        for (this_ptr = head, other_ptr = list.head; this_ptr != nullptr || other_ptr != nullptr;) {
+            if (other_ptr == nullptr) {
+                new_list.add_tail(this_ptr->data);
+                this_ptr = this_ptr->next;
+                // cout << "OTHER IS NULL\n";
+            } else if (this_ptr == nullptr) {
+                new_list.add_tail(other_ptr->data);
+                other_ptr = other_ptr->next;
+                // cout << "THIS IS NULL\n";
+            } else if (this_ptr->data < other_ptr->data) {
+                new_list.add_tail(this_ptr->data);
+                this_ptr = this_ptr->next;
+                //  cout << "TAKING " << this_ptr->data << " FROM THIS\n";
+            } else {
+                new_list.add_tail(other_ptr->data);
+                other_ptr = other_ptr->next;
+                //  cout << "TAKING " << other_ptr->data << " FROM OTHER\n";
+            }
+
+            this->clear();
+            this->append(new_list);
+        }
+
+    }
+
+    void remove_duplicates() {
+        if (is_empty()) return;
+        OrderedList<T> new_list;
+        Node<T> *curr = head->next;
+        new_list.add_tail(head->data);
+        while (curr != nullptr) {
+            if (curr->data == new_list.tail->data) {
+                curr = curr->next;
+                continue;
+            }
+            new_list.add_tail(curr->data);
+            curr = curr->next;
+        }
+        this->clear();
+        this->append(new_list);
     }
 };
 

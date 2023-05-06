@@ -73,6 +73,10 @@ public:
         clear();
     }
 
+    Node<T> *get_head() const {
+        return head;
+    }
+
     T head_val() const {
         return head->data;
     }
@@ -95,9 +99,9 @@ public:
         if (is_empty())
             add_tail(data);
         else {
-            Node<T> *new_node = new Node<T>(data, nullptr, tail);
-            tail->next = new_node;
-            tail = new_node;
+            Node<T> *new_node = new Node<T>(data, head, nullptr);
+            head->prev = new_node;
+            head = new_node;
         }
     }
 
@@ -181,6 +185,7 @@ public:
         return count;
     }
 
+
     void clear() {
         Node<T> *curr = head;
         while (curr != nullptr) {
@@ -207,6 +212,102 @@ public:
         this->append(list);
         return *this;
     }
+
+    void insert_after(const T &val1, const T &val2) {
+        Node<T> *curr = head;
+        while (curr != nullptr) {
+            if (curr->data == val2) break;
+            curr = curr->next;
+        }
+        if (curr == nullptr || curr == tail)
+            add_tail(val1);
+        else {
+            Node<T> *next = curr->next;
+            Node<T> *new_node = new Node<T>(val1, next, curr);
+            curr->next = new_node;
+            next->prev = new_node;
+        }
+    }
+
+    void remove_from(int index, int count) {
+        size_t size = 0;
+        for (Node<T> *curr = head; curr != nullptr; curr = curr->next, size++);
+        if (index < 0 || index >= size || count < 0)
+            throw string("INVALID PARAMETERS");
+
+        Node<T> *curr = head;
+        while (index--) curr = curr->next;
+        while (count-- && curr != nullptr) {
+            Node<T> *temp = curr->next;
+            remove_node(curr);
+            curr = temp;
+        }
+    }
+
+    void append_list_after(Node<T> *node, const List &l1) {
+        if (node == nullptr) {
+            Node<T> *curr = l1.tail;
+            while (curr) {
+                this->add_head(curr->data);
+                curr = curr->prev;
+            }
+        } else {
+            Node<T> *curr = node;
+            Node<T> *next = node->next;
+            Node<T> *insert_node = l1.head;
+            while (insert_node != nullptr) {
+                Node<T> *new_node = new Node<T>(insert_node->data, next, curr);
+                curr->next = new_node;
+                next->prev = new_node;
+                insert_node = insert_node->next;
+                curr = new_node;
+                cout << 1;
+            }
+        }
+    }
+
+    bool is_valid(const List &l2, Node<T> *node) {
+        if (node != nullptr && node->data == l2.head->data)
+            if (node->next != nullptr && node->next->data == l2.head->next->data)
+                return true;
+        return false;
+    }
+
+    Node<T> *delete_2_nodes(Node<T> *node) {
+        if (node == nullptr)
+            throw string("WTF");
+        if (node == head) {
+            remove_head();
+            remove_head();
+            nullptr;
+        } else {
+            Node<T> *prev = node->prev;
+            Node<T> *next = node->next->next->next;
+            delete node->next;
+            delete node;
+            prev->next = next;
+            next->prev = prev;
+            return prev;
+        }
+    }
+
+
+    void replace_sublist(const List &l2, const List &l3) {
+        Node<T> *curr = head;
+        int i = 0;
+        while (curr != nullptr && i != 50) {
+            Node<T> *temp = curr->next;
+            if (is_valid(l2, curr)) {
+                curr = delete_2_nodes(curr);
+                this->append_list_after(curr->prev, l3);
+            }
+            curr = temp;
+            // cout << curr->data << endl;
+            i++;
+        }
+
+    }
+
 
     template<class K>
     friend ostream &operator<<(ostream &os, const List<K> &list);
